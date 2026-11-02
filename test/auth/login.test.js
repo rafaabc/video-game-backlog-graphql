@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import jwt from 'jsonwebtoken';
-import { gql, ops, loadFixture, errorCode, createGame, sampleGame } from '../helpers/graphql.js';
+import { gql, ops, loadFixture, errorCode } from '../helpers/graphql.js';
 
 const { validUsers, invalidCredentials, missingArguments } = loadFixture('login');
 

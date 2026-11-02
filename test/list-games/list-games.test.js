@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { gql, ops, loadFixture, errorCode, getToken, createGame, sampleGame } from '../helpers/graphql.js';
+import { gql, ops, loadFixture, getToken, createGame, sampleGame } from '../helpers/graphql.js';
 
 const fx = loadFixture('list-games');
 const list = (variables = {}, user = 'leon') => gql(ops.list, variables, getToken(user));

@@ -1,0 +1,97 @@
+name: API Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  # Manual run from the Actions tab or `gh workflow run api-tests.yml`
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+
+  # Production dependencies only; fails on high/critical advisories.
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run audit
+
+  api-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    # Server and tests share these. JWT_SECRET must match: the expired-token and
+    # bad-signature tests forge JWTs with it. TOKEN_TTL_SECONDS must match JWT_EXPIRES_IN.
+    env:
+      PORT: 4000
+      BASE_URL: http://localhost:4000
+      JWT_SECRET: ci-test-secret
+      JWT_EXPIRES_IN: 1h
+      TOKEN_TTL_SECONDS: 3600
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Start API in background
+        run: nohup npm start > server.log 2>&1 &
+
+      # No /health endpoint: poll the GraphQL endpoint with a trivial query.
+      - name: Wait for API to be ready
+        run: |
+          for i in $(seq 1 30); do
+            if curl -sf -X POST http://localhost:4000/graphql \
+              -H 'Content-Type: application/json' \
+              -d '{"query":"{ __typename }"}'; then
+              echo "App is ready"
+              exit 0
+            fi
+            echo "Attempt $i/30 - retrying in 2s..."
+            sleep 2
+          done
+          echo "App did not start in time."
+          cat server.log
+          exit 1
+
+      - name: Run API tests
+        run: npm run test:report
+
+      - name: Upload Mochawesome report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mochawesome-report
+          path: mochawesome-report/
+          if-no-files-found: ignore
+
+      - name: Upload server log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-log
+          path: server.log

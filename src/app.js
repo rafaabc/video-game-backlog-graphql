@@ -5,7 +5,7 @@ import { typeDefs } from './schema/typeDefs.js';
 import { resolvers } from './resolvers/index.js';
 import { getUserFromRequest } from './auth/jwt.js';
 
-// Builds the app WITHOUT listening, so Supertest can call request(app).
+// Builds the app WITHOUT listening; src/server.js is the only place that calls listen.
 export async function createApp() {
   // Stacktraces off: cleaner, stable error payloads for assertions.
   const server = new ApolloServer({

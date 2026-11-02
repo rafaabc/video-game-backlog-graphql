@@ -6,7 +6,7 @@
 
 ## Description
 
-This project is a CRUD-style GraphQL API where each user manages their own list of games. Each game has a title, a platform and a status (`PLAYING`, `FINISHED` or `WISHLIST`). It is built with Node.js and Apollo Server, uses in-memory storage and simple JWT authentication, and was created to practice API testing (Supertest, Mocha and Chai are planned, see Features).
+This project is a CRUD-style GraphQL API where each user manages their own list of games. Each game has a title, a platform and a status (`PLAYING`, `FINISHED` or `WISHLIST`). It is built with Node.js and Apollo Server, uses in-memory storage and simple JWT authentication, and was created as a target for API test automation. The repository includes an automated API test suite (Mocha, Chai and Supertest) that runs against the live server, with a GitHub Actions pipeline (lint, audit and tests).
 
 ## Dependencies
 
@@ -25,6 +25,16 @@ No database or external service is needed. Data lives in memory and is lost when
 | `@as-integrations/express5` | ^1.1.2 | Connects Apollo Server to Express |
 | `jsonwebtoken` | ^9.0.3 | Signs and verifies JWT tokens |
 | `dotenv` | ^18.0.9 | Loads environment variables |
+
+Development and testing:
+
+| Package | Version | Purpose |
+|---|---|---|
+| `mocha` | ^12.0.3 | Test runner |
+| `chai` | ^6.3.0 | Assertions |
+| `supertest` | ^7.3.1 | HTTP requests against the running API |
+| `mochawesome` | ^8.1.1 | HTML test report |
+| `eslint`, `@eslint/js`, `globals` | ^10.14.0, ^10.0.1, ^17.14.0 | Linting |
 
 ## Installation and Setup
 
@@ -52,6 +62,8 @@ cp .env.example .env
 | `PORT` | `4000` | Server port |
 | `JWT_SECRET` | `dev-secret-change-me` | Secret used to sign tokens |
 | `JWT_EXPIRES_IN` | `1h` | Token lifetime |
+| `BASE_URL` | `http://localhost:4000` | Server the tests send requests to (tests only) |
+| `TOKEN_TTL_SECONDS` | `3600` | Expected token lifetime checked by the tests; must match `JWT_EXPIRES_IN` (tests only) |
 
 4. Start the API:
 
@@ -135,7 +147,30 @@ Variables:
 
 ### Tests
 
-The automated test suite (Supertest, Mocha and Chai) is not implemented yet.
+The API test suite (156 tests) uses Mocha, Chai and Supertest and sends real HTTP requests to a running server. There are no mocks. It covers login, create, get, list, update and delete, authentication enforcement, error codes and per-user isolation. Data-driven cases live in `fixtures/`.
+
+Start the API in one terminal, then run the tests in another:
+
+```bash
+npm start                # terminal 1
+npm test                 # terminal 2
+npm run test:report      # same, plus an HTML report in mochawesome-report/
+```
+
+Notes:
+
+- The tests create their own games and delete them afterwards, so they can run repeatedly against the same server.
+- One test (empty list for `link`) expects a fresh server: restart the API if it fails after manual use.
+- To test another server, set `BASE_URL`. Token-forging tests (expired token, bad signature) need the same `JWT_SECRET` as that server.
+
+### Code quality and CI
+
+```bash
+npm run lint             # ESLint
+npm run audit            # npm audit for production dependencies (high or critical)
+```
+
+The GitHub Actions workflow (`.github/workflows/api-tests.yml`) runs three parallel jobs: `lint`, `audit` and `api-tests` (starts the API, waits for it to be ready, runs the suite and uploads the Mochawesome report). It runs on push and pull request to `main`, and manually from the Actions tab (`workflow_dispatch`).
 
 ## File Structure
 
@@ -148,8 +183,16 @@ video-game-backlog-graphql/
 │   ├── repositories/gameRepository.js # In-memory storage
 │   ├── auth/                          # JWT helpers and fixed users
 │   ├── errors/errors.js               # NOT_FOUND, BAD_USER_INPUT, UNAUTHENTICATED helpers
-│   ├── app.js                         # Builds the app without listening (used by tests)
+│   ├── app.js                         # Builds the Express + Apollo app without listening
 │   └── server.js                      # Starts the HTTP server
+├── test/
+│   ├── hooks/auth.js                  # Root hooks: logs in once, cleans up created games
+│   ├── helpers/graphql.js             # Request helpers, operations, test data helpers
+│   └── <feature>/*.test.js            # auth, create-game, get-game, list-games, update-game, delete-game, auth-enforcement
+├── fixtures/                          # Data-driven test data (JSON)
+├── .github/workflows/api-tests.yml    # CI: lint, audit and API tests
+├── .mocharc.cjs                       # Mocha configuration
+├── eslint.config.js                   # ESLint configuration
 ├── .env.example                       # Environment variable template
 ├── CLAUDE.md                          # Guidance for Claude Code
 └── package.json

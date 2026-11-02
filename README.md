@@ -1,5 +1,7 @@
 # Video Game Backlog GraphQL API
 
+[![API Tests](https://github.com/rafaabc/video-game-backlog-graphql/actions/workflows/api-tests.yml/badge.svg?branch=main)](https://github.com/rafaabc/video-game-backlog-graphql/actions/workflows/api-tests.yml)
+
 > A small GraphQL API to manage a personal video game backlog, built as a target for API test automation.
 
 ## Description

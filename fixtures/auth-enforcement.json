@@ -1,0 +1,11 @@
+{
+  "badAuthorizationHeaders": [
+    { "description": "no Authorization header", "header": null },
+    { "description": "empty Authorization header", "header": "" },
+    { "description": "Bearer without token", "header": "Bearer" },
+    { "description": "Basic scheme", "header": "Basic abc123" },
+    { "description": "token without scheme", "header": "garbage" },
+    { "description": "garbage token", "header": "Bearer garbage" },
+    { "description": "malformed JWT", "header": "Bearer aaa.bbb.ccc" }
+  ]
+}

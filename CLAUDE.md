@@ -15,7 +15,12 @@ npm run start:graphql     # or: npm start / npm run dev (node --watch)
 
 Server listens on `PORT` (default 4000) at `http://localhost:4000/graphql`. Copy `.env.example` to `.env` to set `PORT`, `JWT_SECRET`, `JWT_EXPIRES_IN` (defaults exist, so `.env` is optional).
 
-No test, lint or build scripts exist yet. Planned test stack: Mocha, Chai, Supertest (Mochawesome for reports). Tests must use `createApp()` from `src/app.js` with `request(app)`, not a running server.
+```
+npm test                  # Mocha + Chai + Supertest against a LIVE server (start it first)
+npm run test:report       # same, Mochawesome HTML in mochawesome-report/
+```
+
+API tests send real HTTP to `BASE_URL` (default `http://localhost:4000`); they do not use `createApp()` or mocks. Start the server (`npm start`) before running them. There is no `reset()` on a live server: each test creates its own data via `createGame()` and the root `afterEach` hook in `test/hooks/auth.js` deletes it. `TC-04-01` (empty list, user `link`) assumes a fresh store. Layout: `test/<feature>/*.test.js`, `test/helpers/graphql.js`, data-driven cases in `fixtures/*.json`, `.mocharc.cjs` (CJS because the package is ESM). Test IDs (`TC-US-NN`) refer to the test-conditions table (US-01 login ... US-07 auth enforcement).
 
 Node >= 20, ESM only (`"type": "module"`): use `import`, and include the `.js` extension in relative imports.
 

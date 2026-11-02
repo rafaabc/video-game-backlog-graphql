@@ -1,0 +1,21 @@
+{
+  "validUsers": [
+    { "username": "leon", "password": "umbrella123" },
+    { "username": "kratos", "password": "spartan123" },
+    { "username": "link", "password": "hyrule123" }
+  ],
+  "invalidCredentials": [
+    { "description": "wrong password", "username": "leon", "password": "wrong" },
+    { "description": "unknown username", "username": "nobody", "password": "umbrella123" },
+    { "description": "username in wrong case", "username": "LEON", "password": "umbrella123" },
+    { "description": "password in wrong case", "username": "leon", "password": "UMBRELLA123" },
+    { "description": "password of another user", "username": "leon", "password": "spartan123" },
+    { "description": "empty username", "username": "", "password": "umbrella123" },
+    { "description": "empty password", "username": "leon", "password": "" }
+  ],
+  "missingArguments": [
+    { "description": "no variables", "variables": {} },
+    { "description": "missing password", "variables": { "username": "leon" } },
+    { "description": "missing username", "variables": { "password": "umbrella123" } }
+  ]
+}

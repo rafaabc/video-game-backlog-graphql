@@ -1,0 +1,22 @@
+{
+  "singleField": [
+    { "description": "title only", "changes": { "title": "Renamed" } },
+    { "description": "platform only", "changes": { "platform": "XBOX" } },
+    { "description": "status only", "changes": { "status": "FINISHED" } }
+  ],
+  "invalidInputs": [
+    { "description": "lowercase platform", "input": { "platform": "pc" } },
+    { "description": "unknown status", "input": { "status": "DONE" } },
+    { "description": "unknown field", "input": { "rating": 5 } },
+    { "description": "unknown field ownerId", "input": { "ownerId": "x" } }
+  ],
+  "blankTitles": [
+    { "description": "empty string", "title": "" },
+    { "description": "spaces only", "title": "   " }
+  ],
+  "nullFields": [
+    { "description": "null title", "input": { "title": null } },
+    { "description": "null platform", "input": { "platform": null } },
+    { "description": "null status", "input": { "status": null } }
+  ]
+}

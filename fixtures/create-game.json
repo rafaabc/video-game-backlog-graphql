@@ -1,0 +1,28 @@
+{
+  "platforms": ["PC", "PS5", "XBOX"],
+  "statuses": ["PLAYING", "FINISHED", "WISHLIST"],
+  "titleCases": [
+    { "description": "surrounding whitespace is trimmed", "title": "  Hades  ", "expected": "Hades" },
+    { "description": "unicode and symbols are preserved", "title": "ゼルダの伝説 ☃ & <b>", "expected": "ゼルダの伝説 ☃ & <b>" },
+    { "description": "inner spaces are preserved", "title": "God  of   War", "expected": "God  of   War" }
+  ],
+  "blankTitles": [
+    { "description": "empty string", "title": "" },
+    { "description": "spaces only", "title": "   " },
+    { "description": "tabs and newlines only", "title": "\t\n " }
+  ],
+  "invalidInputs": [
+    { "description": "missing title", "input": { "platform": "PC", "status": "PLAYING" } },
+    { "description": "missing platform", "input": { "title": "X", "status": "PLAYING" } },
+    { "description": "missing status", "input": { "title": "X", "platform": "PC" } },
+    { "description": "null title", "input": { "title": null, "platform": "PC", "status": "PLAYING" } },
+    { "description": "null platform", "input": { "title": "X", "platform": null, "status": "PLAYING" } },
+    { "description": "null status", "input": { "title": "X", "platform": "PC", "status": null } },
+    { "description": "lowercase platform", "input": { "title": "X", "platform": "ps5", "status": "PLAYING" } },
+    { "description": "unknown platform", "input": { "title": "X", "platform": "SWITCH", "status": "PLAYING" } },
+    { "description": "lowercase status", "input": { "title": "X", "platform": "PC", "status": "playing" } },
+    { "description": "unknown status", "input": { "title": "X", "platform": "PC", "status": "DONE" } },
+    { "description": "unknown extra field", "input": { "title": "X", "platform": "PC", "status": "PLAYING", "ownerId": "1" } },
+    { "description": "bare string instead of object", "input": "Hollow Knight" }
+  ]
+}

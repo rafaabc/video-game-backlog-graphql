@@ -1,0 +1,22 @@
+{
+  "seed": [
+    { "title": "A", "platform": "PC", "status": "PLAYING" },
+    { "title": "B", "platform": "PC", "status": "FINISHED" },
+    { "title": "C", "platform": "PS5", "status": "PLAYING" },
+    { "title": "D", "platform": "XBOX", "status": "WISHLIST" }
+  ],
+  "filters": [
+    { "description": "status PLAYING", "filter": { "status": "PLAYING" } },
+    { "description": "status FINISHED", "filter": { "status": "FINISHED" } },
+    { "description": "status WISHLIST", "filter": { "status": "WISHLIST" } },
+    { "description": "platform PC", "filter": { "platform": "PC" } },
+    { "description": "platform PS5", "filter": { "platform": "PS5" } },
+    { "description": "platform XBOX", "filter": { "platform": "XBOX" } },
+    { "description": "status PLAYING and platform PC", "filter": { "status": "PLAYING", "platform": "PC" } },
+    { "description": "status WISHLIST and platform PC", "filter": { "status": "WISHLIST", "platform": "PC" } }
+  ],
+  "invalidFilters": [
+    { "description": "lowercase status", "variables": { "status": "playing" } },
+    { "description": "unknown platform", "variables": { "platform": "SWITCH" } }
+  ]
+}
